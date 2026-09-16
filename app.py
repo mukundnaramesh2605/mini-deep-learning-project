@@ -28,8 +28,12 @@ tab1, tab2 = st.tabs(["Draw", "Upload"])
 with tab1:
     canvas = st_canvas(fill_color="white", stroke_width=18, stroke_color="white",
                        background_color="black", width=280, height=280, key="canvas")
-    if canvas.image_data is not None and canvas.image_data[:, :, :3].sum() > 0:
-        img = Image.fromarray(canvas.image_data.astype("uint8"))
+    try:
+        data = canvas.image_data
+    except RuntimeError:
+        data = None
+    if data is not None and data[:, :, :3].sum() > 0:
+        img = Image.fromarray(data.astype("uint8"))
         x = preprocess(img)
 
 with tab2:
