@@ -20,18 +20,16 @@ model = load_model()
 def preprocess(img: Image.Image):
     img = ImageOps.grayscale(img).resize((28, 28))
     arr = np.array(img, dtype=np.float32) / 255.0
-    arr = (arr - 0.1307) / 0.3081          # same normalisation as training
+    arr = (arr - 0.5) / 0.5         # same normalisation as training
     return torch.tensor(arr).unsqueeze(0).unsqueeze(0)
 
 tab1, tab2 = st.tabs(["Draw", "Upload"])
 
 with tab1:
     canvas = st_canvas(fill_color="white", stroke_width=18, stroke_color="white",
-                       background_color="black", width=280, height=280, key="canvas")
-    try:
-        data = canvas.image_data
-    except RuntimeError:
-        data = None
+                       background_color="black", width=280, height=280,
+                       return_image_data=True, key="canvas")
+    data = canvas.image_data
     if data is not None and data[:, :, :3].sum() > 0:
         img = Image.fromarray(data.astype("uint8"))
         x = preprocess(img)
